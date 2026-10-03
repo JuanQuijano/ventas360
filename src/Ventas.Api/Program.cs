@@ -16,6 +16,7 @@ builder.Services.AddScoped<IClienteRepositorio, SqlClienteRepositorio>();
 builder.Services.AddScoped<ClienteService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IValidator<CrearClienteRequest>, ClientesValidator>();
+builder.Services.AddScoped<IValidator<CrearPedidoRequest>, CrearPedidoValidator>();
 
 builder.Services.AddProblemDetails();
 
