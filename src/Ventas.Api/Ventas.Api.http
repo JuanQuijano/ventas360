@@ -1,0 +1,39 @@
+@api = http://localhost:5080
+
+### Estado del servicio
+GET {{api}}/
+
+### Clientes activos
+GET {{api}}/clientes
+
+### Resumen por provincia
+GET {{api}}/clientes/resumen-provincias
+
+### Alta de cliente (válido)
+POST {{api}}/clientes
+Content-Type: application/json
+
+{
+  "nombre": "Ferretería Prueba SL",
+  "nif": "B12345674",
+  "email": "compras@ferreteriaprueba.es",
+  "provincia": "Zaragoza"
+}
+
+### Buscar pedidos
+GET {{api}}/pedidos?desde=2026-01-01&hasta=2026-12-31&pagina=1&tamanoPagina=20
+
+### Pedido por id
+GET {{api}}/pedidos/1
+
+### Crear pedido
+POST {{api}}/pedidos
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "lineas": [
+    { "productoId": 1, "cantidad": 2 },
+    { "productoId": 3, "cantidad": 1 }
+  ]
+}
