@@ -24,9 +24,9 @@ public class ClienteService
     /// <summary>Número de clientes activos por provincia, de mayor a menor.</summary>
     public async Task<IReadOnlyList<ResumenProvincia>> ObtenerResumenPorProvinciaAsync(CancellationToken ct = default)
     {
-        var lst = await _repositorio.ObtenerActivosAsync(ct);
+        var clientesActivos = await _repositorio.ObtenerActivosAsync(ct);
 
-        var resumen = lst
+        var resumen = clientesActivos
             .GroupBy(c => c.Provincia)
             .Select(g => new ResumenProvincia(g.Key, g.Count()))
             .OrderByDescending(r => r.NumClientes)
