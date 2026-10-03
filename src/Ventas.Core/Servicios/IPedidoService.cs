@@ -6,5 +6,5 @@ public interface IPedidoService
 {
     List<Pedido> BuscarPedidos(FiltroPedidos filtro);
     Pedido? ObtenerPorId(int id);
-    int Crear(int clienteId, List<(int ProductoId, int Cantidad)> lineas);
+    int Crear(int clienteId, string canal, List<(int ProductoId, int Cantidad)> lineas);
 }

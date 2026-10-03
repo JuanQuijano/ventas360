@@ -35,7 +35,7 @@ public static class PedidosEndpoints
                 .Select(l => (l.ProductoId, l.Cantidad))
                 .ToList();
 
-            var id = servicio.Crear(peticion.ClienteId, lineas);
+            var id = servicio.Crear(peticion.ClienteId, peticion.Canal ?? CanalesVenta.Web, lineas);
             return Results.Created($"/pedidos/{id}", new { id });
         });
 

@@ -64,6 +64,29 @@ public class CrearPedidoValidatorTests
         Assert.True(resultado.IsValid);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("Web")]
+    [InlineData("Tienda")]
+    [InlineData("Telefono")]
+    public async Task Validar_CanalPermitidoOSinCanal_EsValida(string? canal)
+    {
+        var resultado = await _validador.ValidateAsync(PeticionValida() with { Canal = canal });
+
+        Assert.True(resultado.IsValid);
+    }
+
+    [Theory]
+    [InlineData("Fax")]
+    [InlineData("web")]
+    [InlineData("")]
+    public async Task Validar_CanalNoPermitido_DevuelveError(string canal)
+    {
+        var resultado = await _validador.ValidateAsync(PeticionValida() with { Canal = canal });
+
+        Assert.Contains(resultado.Errors, e => e.PropertyName == "Canal");
+    }
+
     [Fact]
     public async Task Validar_ClienteInactivo_DevuelveError()
     {

@@ -1,5 +1,6 @@
 using FluentValidation;
 using Ventas.Core.Datos;
+using Ventas.Core.Modelos;
 
 namespace Ventas.Api.Pedidos;
 
@@ -18,6 +19,11 @@ public class CrearPedidoValidator : AbstractValidator<CrearPedidoRequest>
 
         RuleFor(p => p.Lineas)
             .NotEmpty().WithMessage("El pedido debe tener al menos una línea.");
+
+        RuleFor(p => p.Canal)
+            .Must(CanalesVenta.EsValido)
+            .WithMessage($"El canal debe ser uno de estos valores: {string.Join(", ", CanalesVenta.Todos)}.")
+            .When(p => p.Canal is not null);
 
         RuleForEach(p => p.Lineas).ChildRules(linea =>
         {

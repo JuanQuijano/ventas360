@@ -7,6 +7,7 @@ public class Pedido
     public string NombreCliente { get; set; } = string.Empty;
     public DateTime Fecha { get; set; }
     public string Estado { get; set; } = "Pendiente";
+    public string Canal { get; set; } = CanalesVenta.Web;
     public decimal Total { get; set; }
     public List<LineaPedido> Lineas { get; set; } = new();
 }

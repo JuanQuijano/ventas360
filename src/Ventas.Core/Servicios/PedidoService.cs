@@ -20,7 +20,7 @@ public class PedidoService : IPedidoService
     public List<Pedido> BuscarPedidos(FiltroPedidos filtro)
     {
         var resultado = new List<Pedido>();
-        string sql = "SELECT p.Id, p.ClienteId, c.Nombre, p.Fecha, p.Estado, p.Total FROM Pedidos p INNER JOIN Clientes c ON c.Id = p.ClienteId WHERE 1=1";
+        string sql = "SELECT p.Id, p.ClienteId, c.Nombre, p.Fecha, p.Estado, p.Canal, p.Total FROM Pedidos p INNER JOIN Clientes c ON c.Id = p.ClienteId WHERE 1=1";
 
         if (filtro.Desde != null)
         {
@@ -67,6 +67,7 @@ public class PedidoService : IPedidoService
                 p.NombreCliente = dr["Nombre"].ToString()!;
                 p.Fecha = Convert.ToDateTime(dr["Fecha"]);
                 p.Estado = dr["Estado"].ToString()!;
+                p.Canal = dr["Canal"].ToString()!;
                 p.Total = Convert.ToDecimal(dr["Total"]);
                 resultado.Add(p);
             }
@@ -118,7 +119,7 @@ public class PedidoService : IPedidoService
         cn.Open();
         try
         {
-            SqlCommand cmd = new SqlCommand("SELECT p.Id, p.ClienteId, c.Nombre, p.Fecha, p.Estado, p.Total FROM Pedidos p INNER JOIN Clientes c ON c.Id = p.ClienteId WHERE p.Id = " + id, cn);
+            SqlCommand cmd = new SqlCommand("SELECT p.Id, p.ClienteId, c.Nombre, p.Fecha, p.Estado, p.Canal, p.Total FROM Pedidos p INNER JOIN Clientes c ON c.Id = p.ClienteId WHERE p.Id = " + id, cn);
             SqlDataReader dr = cmd.ExecuteReader();
             while (dr.Read())
             {
@@ -128,6 +129,7 @@ public class PedidoService : IPedidoService
                 p.NombreCliente = dr["Nombre"].ToString()!;
                 p.Fecha = Convert.ToDateTime(dr["Fecha"]);
                 p.Estado = dr["Estado"].ToString()!;
+                p.Canal = dr["Canal"].ToString()!;
                 p.Total = Convert.ToDecimal(dr["Total"]);
                 resultado.Add(p);
             }
@@ -158,7 +160,7 @@ public class PedidoService : IPedidoService
         return resultado;
     }
 
-    public int Crear(int clienteId, List<(int ProductoId, int Cantidad)> lineas)
+    public int Crear(int clienteId, string canal, List<(int ProductoId, int Cantidad)> lineas)
     {
         SqlConnection cn = new SqlConnection(_conexion.CadenaConexion);
         cn.Open();
@@ -185,7 +187,8 @@ public class PedidoService : IPedidoService
 
             decimal total = _calculadora.CalcularTotal(lineasPedido);
 
-            SqlCommand cmdPedido = new SqlCommand("INSERT INTO Pedidos (ClienteId, Fecha, Estado, Total) OUTPUT INSERTED.Id VALUES (" + clienteId + ", SYSDATETIME(), 'Pendiente', " + total.ToString(System.Globalization.CultureInfo.InvariantCulture) + ")", cn);
+            SqlCommand cmdPedido = new SqlCommand("INSERT INTO Pedidos (ClienteId, Fecha, Estado, Canal, Total) OUTPUT INSERTED.Id VALUES (" + clienteId + ", SYSDATETIME(), 'Pendiente', @Canal, " + total.ToString(System.Globalization.CultureInfo.InvariantCulture) + ")", cn);
+            cmdPedido.Parameters.AddWithValue("@Canal", canal);
             int idPedido = (int)cmdPedido.ExecuteScalar();
 
             foreach (var l in lineasPedido)

@@ -32,6 +32,7 @@ Content-Type: application/json
 
 {
   "clienteId": 1,
+  "canal": "Tienda",
   "lineas": [
     { "productoId": 1, "cantidad": 2 },
     { "productoId": 3, "cantidad": 1 }
