@@ -1,3 +1,4 @@
+using FluentValidation;
 using Ventas.Core.Modelos;
 using Ventas.Core.Servicios;
 
@@ -18,8 +19,18 @@ public static class PedidosEndpoints
                 ? Results.Ok(pedido)
                 : Results.NotFound());
 
-        grupo.MapPost("/", (CrearPedidoRequest peticion, IPedidoService servicio) =>
+        grupo.MapPost("/", async (
+            CrearPedidoRequest peticion,
+            IValidator<CrearPedidoRequest> validador,
+            IPedidoService servicio,
+            CancellationToken ct) =>
         {
+            var resultado = await validador.ValidateAsync(peticion, ct);
+            if (!resultado.IsValid)
+            {
+                return Results.ValidationProblem(resultado.ToDictionary());
+            }
+
             var lineas = peticion.Lineas
                 .Select(l => (l.ProductoId, l.Cantidad))
                 .ToList();
